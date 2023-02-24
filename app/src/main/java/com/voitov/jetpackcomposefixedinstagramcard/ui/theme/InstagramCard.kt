@@ -6,12 +6,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.voitov.jetpackcomposefixedinstagramcard.R
 
 @Composable
 fun InstagramProfileCard() {
@@ -28,37 +34,40 @@ fun InstagramProfileCard() {
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(Color.Blue)
-            )
-            VerticalArrangementTextPair()
-            VerticalArrangementTextPair()
-            VerticalArrangementTextPair()
+            Card(
+                shape = RoundedCornerShape(50),
+                border = BorderStroke(2.dp, Color(247, 119, 55))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .background(Color.Green)
+                )
+            }
+            UserAccountStats("3760", stringResource(R.string.posts))
+            UserAccountStats("17M", stringResource(R.string.followers))
+            UserAccountStats("200", stringResource(R.string.following))
         }
     }
 }
 
 @Composable
-private fun VerticalArrangementTextPair() {
+private fun UserAccountStats(value: String, param: String) {
     Column(
-        modifier = Modifier
-            .width(50.dp)
-            .height(80.dp)
-            .background(Color.Yellow),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround,
     ) {
-        Box(
-            modifier = Modifier
-                .size(25.dp)
-                .background(Color.Red)
+        Text(
+            text = value,
+            color = MaterialTheme.colors.onBackground,
+            fontSize = 24.sp,
+            fontFamily = FontFamily.Cursive,
         )
-        Box(
-            modifier = Modifier
-                .size(25.dp)
-                .background(Color.Green)
+        Text(
+            text = param,
+            color = MaterialTheme.colors.onBackground,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold
         )
     }
 }
