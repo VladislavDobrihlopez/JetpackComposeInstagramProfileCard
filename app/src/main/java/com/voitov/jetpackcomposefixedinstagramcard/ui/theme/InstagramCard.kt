@@ -6,9 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,27 +30,32 @@ fun InstagramProfileCard() {
         backgroundColor = MaterialTheme.colors.background,
         border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(all = 8.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Image(
+        Column(modifier = Modifier.padding(all = 8.dp)) {
+            Row(
                 modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .size(75.dp)
-                    .clip(shape = CircleShape)
-                    .background(MaterialTheme.colors.onBackground),
-                painter = painterResource(id = R.drawable.ic_instagram_logo),
-                contentDescription = "profile image",
-                contentScale = ContentScale.FillHeight,
-                colorFilter = ColorFilter.tint(MaterialTheme.colors.background)
-            )
-            UserAccountStats("3760", stringResource(R.string.posts))
-            UserAccountStats("17M", stringResource(R.string.followers))
-            UserAccountStats("200", stringResource(R.string.following))
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Image(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .size(75.dp)
+                        .clip(shape = CircleShape)
+                        .background(MaterialTheme.colors.onBackground),
+                    painter = painterResource(id = R.drawable.ic_instagram_logo),
+                    contentDescription = "profile image",
+                    contentScale = ContentScale.FillHeight,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colors.background)
+                )
+                UserAccountStats("3760", stringResource(R.string.posts))
+                UserAccountStats("17M", stringResource(R.string.followers))
+                UserAccountStats("200", stringResource(R.string.following))
+            }
+            Column(modifier = Modifier.padding(all = 8.dp)) {
+                UserAccountDescription()
+                PossibleActions()
+            }
         }
     }
 }
@@ -75,6 +78,56 @@ private fun UserAccountStats(value: String, param: String) {
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
+    }
+}
+
+@Composable
+private fun UserAccountDescription() {
+    Text(
+        "first_name last_name",
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colors.onBackground,
+        fontSize = 16.sp,
+    )
+    Text(
+        "some_description",
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colors.onBackground,
+        fontSize = 16.sp,
+    )
+}
+
+@Composable
+private fun PossibleActions() {
+    Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+        Button(
+            onClick = { },
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 2.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colors.background,
+                contentColor = MaterialTheme.colors.onBackground
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colors.onBackground)
+        ) {
+            Text("Follow")
+        }
+        Button(
+            onClick = { },
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 2.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colors.background,
+                contentColor = MaterialTheme.colors.onBackground
+            ),
+            border = BorderStroke(
+                1.dp, MaterialTheme.colors.onBackground
+            )
+        ) {
+            Text("Message")
+        }
     }
 }
 
