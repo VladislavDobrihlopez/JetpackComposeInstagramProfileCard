@@ -8,9 +8,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -24,6 +28,9 @@ import com.voitov.jetpackcomposefixedinstagramcard.R
 
 @Composable
 fun InstagramProfileCard() {
+    val isUserFollowed = rememberSaveable {
+        mutableStateOf(false)
+    }
     Card(
         modifier = Modifier.padding(all = 8.dp),
         shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
@@ -54,7 +61,7 @@ fun InstagramProfileCard() {
             }
             Column(modifier = Modifier.padding(all = 8.dp)) {
                 UserAccountDescription()
-                PossibleActions()
+                PossibleActions(isUserFollowed)
             }
         }
     }
@@ -98,36 +105,62 @@ private fun UserAccountDescription() {
 }
 
 @Composable
-private fun PossibleActions() {
+private fun PossibleActions(state: MutableState<Boolean>) {
     Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-        Button(
-            onClick = { },
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 2.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.background,
-                contentColor = MaterialTheme.colors.onBackground
-            ),
-            border = BorderStroke(1.dp, MaterialTheme.colors.onBackground)
-        ) {
-            Text("Follow")
+        FollowButton(state.value) {
+            state.value = !state.value
         }
-        Button(
-            onClick = { },
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 2.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.background,
-                contentColor = MaterialTheme.colors.onBackground
-            ),
-            border = BorderStroke(
-                1.dp, MaterialTheme.colors.onBackground
-            )
-        ) {
-            Text("Message")
+        MessageButton()
+    }
+}
+
+@Composable
+private fun RowScope.FollowButton(
+    isUserFollowed: Boolean,
+    callback: (() -> Unit)?
+) {
+    Button(
+        onClick = {
+            callback?.invoke()
+        },
+        modifier = Modifier
+            .weight(1f)
+            .padding(end = 2.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = if (isUserFollowed) {
+                Color.Red.copy(0.5f)
+            } else {
+                MaterialTheme.colors.background
+            },
+            contentColor = MaterialTheme.colors.onBackground
+        ),
+        border = BorderStroke(1.dp, MaterialTheme.colors.onBackground)
+    ) {
+        val buttonText = if (isUserFollowed) {
+            "Unfollow"
+        } else {
+            "Follow"
         }
+        Text(buttonText)
+    }
+}
+
+@Composable
+private fun RowScope.MessageButton() {
+    Button(
+        onClick = { },
+        modifier = Modifier
+            .weight(1f)
+            .padding(start = 2.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.background,
+            contentColor = MaterialTheme.colors.onBackground
+        ),
+        border = BorderStroke(
+            1.dp, MaterialTheme.colors.onBackground
+        )
+    ) {
+        Text("Message")
     }
 }
 
