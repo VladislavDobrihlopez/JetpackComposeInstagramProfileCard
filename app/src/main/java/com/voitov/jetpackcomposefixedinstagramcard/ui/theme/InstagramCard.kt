@@ -8,9 +8,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,13 +23,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.voitov.jetpackcomposefixedinstagramcard.MainViewModel
 import com.voitov.jetpackcomposefixedinstagramcard.R
 
 @Composable
-fun InstagramProfileCard() {
-    val isUserFollowed = rememberSaveable {
-        mutableStateOf(false)
-    }
+fun InstagramProfileCard(viewModel: MainViewModel) {
+    val isUserFollowed = viewModel.isFollowed.observeAsState(false)
+
     Card(
         modifier = Modifier.padding(all = 8.dp),
         shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
@@ -61,7 +60,7 @@ fun InstagramProfileCard() {
             }
             Column(modifier = Modifier.padding(all = 8.dp)) {
                 UserAccountDescription()
-                PossibleActions(isUserFollowed)
+                PossibleActions(viewModel, isUserFollowed)
             }
         }
     }
@@ -105,10 +104,10 @@ private fun UserAccountDescription() {
 }
 
 @Composable
-private fun PossibleActions(state: MutableState<Boolean>) {
+private fun PossibleActions(viewModel: MainViewModel, state: State<Boolean>) {
     Row(horizontalArrangement = Arrangement.SpaceEvenly) {
         FollowButton(state.value) {
-            state.value = !state.value
+            viewModel.changeFollowingStatus()
         }
         MessageButton()
     }
@@ -168,7 +167,7 @@ private fun RowScope.MessageButton() {
 @Composable
 fun InstagramProfileCardLightTheme() {
     JetpackComposeFixedInstagramCardTheme(darkTheme = false) {
-        InstagramProfileCard()
+        InstagramProfileCard(MainViewModel())
     }
 }
 
@@ -176,6 +175,6 @@ fun InstagramProfileCardLightTheme() {
 @Composable
 fun InstagramProfileCardDarkTheme() {
     JetpackComposeFixedInstagramCardTheme(darkTheme = true) {
-        InstagramProfileCard()
+        InstagramProfileCard(MainViewModel())
     }
 }
