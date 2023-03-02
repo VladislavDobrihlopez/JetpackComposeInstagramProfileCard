@@ -1,5 +1,6 @@
 package com.voitov.jetpackcomposefixedinstagramcard.ui.theme
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +27,8 @@ import androidx.compose.ui.unit.sp
 import com.voitov.jetpackcomposefixedinstagramcard.MainViewModel
 import com.voitov.jetpackcomposefixedinstagramcard.R
 
+private const val TAG = "recomposition_tag"
+
 @Composable
 fun InstagramProfileCard(viewModel: MainViewModel) {
     val isUserFollowed = viewModel.isFollowed.observeAsState(false)
@@ -36,6 +39,7 @@ fun InstagramProfileCard(viewModel: MainViewModel) {
         backgroundColor = MaterialTheme.colors.background,
         border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
     ) {
+        Log.d(TAG, "Card")
         Column(modifier = Modifier.padding(all = 8.dp)) {
             Row(
                 modifier = Modifier
@@ -104,9 +108,10 @@ private fun UserAccountDescription() {
 }
 
 @Composable
-private fun PossibleActions(viewModel: MainViewModel, state: State<Boolean>) {
+private fun PossibleActions(viewModel: MainViewModel, isUserFollowedState: State<Boolean>) {
+    Log.d(TAG, "PossibleActions")
     Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-        FollowButton(state.value) {
+        FollowButton(isUserFollowedState) {
             viewModel.changeFollowingStatus()
         }
         MessageButton()
@@ -115,9 +120,10 @@ private fun PossibleActions(viewModel: MainViewModel, state: State<Boolean>) {
 
 @Composable
 private fun RowScope.FollowButton(
-    isUserFollowed: Boolean,
+    isUserFollowedState: State<Boolean>,
     callback: (() -> Unit)?
 ) {
+    Log.d(TAG, "Follow button")
     Button(
         onClick = {
             callback?.invoke()
@@ -126,7 +132,7 @@ private fun RowScope.FollowButton(
             .weight(1f)
             .padding(end = 2.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (isUserFollowed) {
+            backgroundColor = if (isUserFollowedState.value) {
                 Color.Red.copy(0.5f)
             } else {
                 MaterialTheme.colors.background
@@ -135,7 +141,7 @@ private fun RowScope.FollowButton(
         ),
         border = BorderStroke(1.dp, MaterialTheme.colors.onBackground)
     ) {
-        val buttonText = if (isUserFollowed) {
+        val buttonText = if (isUserFollowedState.value) {
             "Unfollow"
         } else {
             "Follow"
