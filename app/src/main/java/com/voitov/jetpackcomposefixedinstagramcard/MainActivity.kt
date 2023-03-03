@@ -6,7 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import com.voitov.jetpackcomposefixedinstagramcard.ui.theme.InstagramProfileCard
@@ -21,12 +24,28 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             JetpackComposeFixedInstagramCardTheme {
-                Column(
-                    modifier = Modifier
-                        .background(MaterialTheme.colors.background)
-                        .fillMaxSize()
-                ) {
-                    InstagramProfileCard(viewModel)
+                ProfilesFeed()
+            }
+        }
+    }
+
+    @Composable
+    fun ProfilesFeed() {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxSize()
+        ) {
+
+            val profiles = viewModel.userProfile.observeAsState(listOf())
+
+            LazyColumn {
+                for (profile in profiles.value) {
+                    item {
+                        InstagramProfileCard(profile) {
+                            viewModel.changeFollowingStatus(it.id)
+                        }
+                    }
                 }
             }
         }

@@ -9,8 +9,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,15 +22,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.voitov.jetpackcomposefixedinstagramcard.MainViewModel
+import com.voitov.jetpackcomposefixedinstagramcard.InstaProfile
 import com.voitov.jetpackcomposefixedinstagramcard.R
 
 private const val TAG = "recomposition_tag"
 
 @Composable
-fun InstagramProfileCard(viewModel: MainViewModel) {
-    val isUserFollowed = viewModel.isFollowed.observeAsState(false)
-
+fun InstagramProfileCard(
+    profile: InstaProfile,
+    onFollowButtonClickListener: (InstaProfile) -> Unit
+) {
     Card(
         modifier = Modifier.padding(all = 8.dp),
         shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
@@ -53,18 +52,20 @@ fun InstagramProfileCard(viewModel: MainViewModel) {
                         .size(75.dp)
                         .clip(shape = CircleShape)
                         .background(MaterialTheme.colors.onBackground),
-                    painter = painterResource(id = R.drawable.ic_instagram_logo),
-                    contentDescription = "profile image",
+                    painter = painterResource(id = profile.avatarResId),
+                    contentDescription = profile.description,
                     contentScale = ContentScale.FillHeight,
                     colorFilter = ColorFilter.tint(MaterialTheme.colors.background)
                 )
-                UserAccountStats("3760", stringResource(R.string.posts))
-                UserAccountStats("17M", stringResource(R.string.followers))
-                UserAccountStats("200", stringResource(R.string.following))
+                UserAccountStats(profile.posts.toString(), stringResource(R.string.posts))
+                UserAccountStats(profile.followers.toString(), stringResource(R.string.followers))
+                UserAccountStats(profile.following.toString(), stringResource(R.string.following))
             }
             Column(modifier = Modifier.padding(all = 8.dp)) {
                 UserAccountDescription()
-                PossibleActions(viewModel, isUserFollowed)
+                PossibleActions(profile) {
+                    onFollowButtonClickListener(profile)
+                }
             }
         }
     }
@@ -108,11 +109,11 @@ private fun UserAccountDescription() {
 }
 
 @Composable
-private fun PossibleActions(viewModel: MainViewModel, isUserFollowedState: State<Boolean>) {
+private fun PossibleActions(userProfile: InstaProfile, onFollowButtonClickListener: () -> Unit) {
     Log.d(TAG, "PossibleActions")
     Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-        FollowButton(isUserFollowedState) {
-            viewModel.changeFollowingStatus()
+        FollowButton(userProfile) {
+            onFollowButtonClickListener()
         }
         MessageButton()
     }
@@ -120,7 +121,7 @@ private fun PossibleActions(viewModel: MainViewModel, isUserFollowedState: State
 
 @Composable
 private fun RowScope.FollowButton(
-    isUserFollowedState: State<Boolean>,
+    userProfile: InstaProfile,
     callback: (() -> Unit)?
 ) {
     Log.d(TAG, "Follow button")
@@ -132,7 +133,7 @@ private fun RowScope.FollowButton(
             .weight(1f)
             .padding(end = 2.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (isUserFollowedState.value) {
+            backgroundColor = if (userProfile.isFollower) {
                 Color.Red.copy(0.5f)
             } else {
                 MaterialTheme.colors.background
@@ -141,7 +142,7 @@ private fun RowScope.FollowButton(
         ),
         border = BorderStroke(1.dp, MaterialTheme.colors.onBackground)
     ) {
-        val buttonText = if (isUserFollowedState.value) {
+        val buttonText = if (userProfile.isFollower) {
             "Unfollow"
         } else {
             "Follow"
@@ -173,7 +174,7 @@ private fun RowScope.MessageButton() {
 @Composable
 fun InstagramProfileCardLightTheme() {
     JetpackComposeFixedInstagramCardTheme(darkTheme = false) {
-        InstagramProfileCard(MainViewModel())
+        //InstagramProfileCard(MainViewModel())
     }
 }
 
@@ -181,6 +182,6 @@ fun InstagramProfileCardLightTheme() {
 @Composable
 fun InstagramProfileCardDarkTheme() {
     JetpackComposeFixedInstagramCardTheme(darkTheme = true) {
-        InstagramProfileCard(MainViewModel())
+        //InstagramProfileCard(MainViewModel())
     }
 }
