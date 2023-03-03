@@ -36,4 +36,10 @@ class MainViewModel : ViewModel() {
             }
         _userProfile.value = modifiedList
     }
+
+    fun remove(userProfile: InstaProfile) {
+        val modifiedList = _userProfile.value?.toMutableList() ?: throw IllegalStateException()
+        modifiedList.remove(userProfile)
+        _userProfile.value = modifiedList
+    }
 }
